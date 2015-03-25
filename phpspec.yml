@@ -1,0 +1,5 @@
+suites:
+    main:
+        namespace: chineseClass
+        psr4_prefix: chineseClass
+        src_path: app
