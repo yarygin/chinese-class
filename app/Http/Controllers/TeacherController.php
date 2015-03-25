@@ -108,13 +108,21 @@ class TeacherController extends Controller {
     {
         $students = is_null(Request::input('students'))?Array():Request::input('students');
         $allStudents = Student::whereIn('id', $students)->get();
-        DB::enableQueryLog();
-        $allTeachers = Teacher::whereHas('students', function($q) use ($students)
-        {
-            $q->whereIn('id', $students);
-        })->get();
-        $queries = DB::getQueryLog();
-        print_r($queries);
-        // return View::make('teacher_filter_result')->withStudents($allStudents)->withTeachers($allTeachers);
+        $query = "select teacher_id from 
+			(select teacher_id, count(student_id) as student_count
+			from student_teacher 
+			group by teacher_id) as D_all
+			inner join 
+			(select teacher_id as t_id, count(student_id) as  s_count
+			from student_teacher 
+			where student_id in (:in_values)
+			group by teacher_id) as D_need
+			on D_need.t_id = D_all.teacher_id AND D_need.s_count = D_all.student_count"
+        // $allTeachers = Teacher::whereHas('students', function($q) use ($students)
+        // {
+        //     $q->whereIn('id', $students);
+        // })->get();
+
+        return View::make('teacher_filter_result')->withStudents($allStudents)->withTeachers($allTeachers);
     }
 }
