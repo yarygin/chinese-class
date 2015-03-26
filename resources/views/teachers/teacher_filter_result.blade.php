@@ -6,7 +6,7 @@
 				{{ $student->name }} 
 			@endforeach
 		<div>
-			<h2>Общие преподаватели</h2>
+			<h2>Результат</h2>
 			@foreach ($teachers as $teacher)
 				<p>{{ $teacher->name }}</p>
 			@endforeach

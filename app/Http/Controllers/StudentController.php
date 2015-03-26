@@ -14,7 +14,8 @@ class StudentController extends Controller {
 	public function index()
 	{
         $students = Student::get();
-        return View::make("students_list")->withStudents($students);
+        return View::make("index")
+        	->withStudents($students);
 	}
 
 	/**
@@ -26,7 +27,9 @@ class StudentController extends Controller {
 	{
         $student = Student::find($id);
         $teachers = $student->teachers()->get();
-        return View::make("student")->withTeachers($teachers)->withStudent($student);
+        return View::make("show")
+        	->withTeachers($teachers)
+        	->withStudent($student);
 	}
 
 	/**
@@ -36,7 +39,7 @@ class StudentController extends Controller {
 	 */
 	public function create()
 	{
-        return View::make("student_create");
+        return View::make("create");
 	}
 
 	/**

@@ -17,7 +17,7 @@ class TeacherController extends Controller {
     public function index()
     {
         $teachers = Teacher::get();
-        return View::make("teachers_list")->withTeachers($teachers);
+        return View::make("teachers.index")->withTeachers($teachers);
     }
 
     /**
@@ -30,7 +30,7 @@ class TeacherController extends Controller {
         $teacher = Teacher::find($id);
         $allStudents = Student::all();
         $checkedStudents = $teacher->students()->lists('id');
-        return View::make("teacher_edit")
+        return View::make("teachers.edit")
             ->withTeacher($teacher)
             ->withStudents($allStudents)
             ->withChecked($checkedStudents);
@@ -45,7 +45,9 @@ class TeacherController extends Controller {
     {
         $teacher = Teacher::find($id);
         $students = $teacher->students;
-        return View::make("teacher")->withTeacher($teacher)->withStudents($students);
+        return View::make("teachers.show")
+        	->withTeacher($teacher)
+        	->withStudents($students);
     }
 
     /**
@@ -56,7 +58,8 @@ class TeacherController extends Controller {
     public function create()
     {
         $allStudents = Student::all();
-        return View::make("teacher_create")->withStudents($allStudents);
+        return View::make("teachers.create")
+        	->withStudents($allStudents);
     }
 
     /**
@@ -96,7 +99,8 @@ class TeacherController extends Controller {
     {
     	$teachers = Request::input('teachers');
         $allStudents = Student::all();
-        return View::make("teacher_filter")->withStudents($allStudents);
+        return View::make("teachers.teacher_filter")
+        	->withStudents($allStudents);
     }
 
     /**
@@ -110,19 +114,19 @@ class TeacherController extends Controller {
         $allStudents = Student::find($students_id);
         // TODO: Изменить этот кошмарный (но рабочий) запрос
 
-  		// select * from 
+  		// SELECT * FROM 
 		// teachers
-		// inner join
-		// (select teacher_id, count(student_id) as student_count
-		// from student_teacher 
-		// group by teacher_id) as D_all
-		// on teachers.id = teacher_id
-		// inner join 	
-		// (select teacher_id as t_id, count(student_id) as  s_count
-		// from student_teacher 
-		// where student_id in (".implode(',', $students_id).")
-		// group by teacher_id) as D_need
-		// on D_need.t_id = D_all.teacher_id AND D_need.s_count = D_all.student_count
+		// INNER JOIN
+		// (SELECT teacher_id, count(student_id) AS student_count
+		// FROM student_teacher 
+		// GROUP BY teacher_id) AS D_all
+		// ON teachers.id = teacher_id
+		// INNER JOIN 	
+		// (SELECT teacher_id AS t_id, count(student_id) AS  s_count
+		// FROM student_teacher 
+		// WHERE student_id in (:students_id))
+		// GROUP BY teacher_id) AS D_need
+		// ON D_need.t_id = D_all.teacher_id AND D_need.s_count = D_all.student_count
 
 		$d_all = DB::table('student_teacher')
 					->select(DB::raw('teacher_id, count(student_id) as student_count'))
@@ -141,6 +145,8 @@ class TeacherController extends Controller {
 					})
 					->mergeBindings($d_need)
 					->whereRaw('D_all.student_count = D_need.student_count')->get();
-        return View::make('teacher_filter_result')->withStudents($allStudents)->withTeachers($teachers);
+        return View::make('teachers.teacher_filter_result')
+        	->withStudents($allStudents)
+        	->withTeachers($teachers);
     }
 }
