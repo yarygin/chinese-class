@@ -21,7 +21,7 @@ Route::resource('teachers', 'TeacherController',
                 ['only' => ['index', 'show', 'create', 'store', 'edit', 'update' ]]);
 
 Route::get('/filter', 'TeacherController@filter');
-Route::post('/filter/result', 'TeacherController@sharedStudents');
+Route::post('/filter/result', 'TeacherController@uniqueStudents');
 
 Route::resource('students', 'StudentController',
                 ['only' => ['index', 'show', 'create', 'store', 'edit', 'update' ]]);

@@ -17,7 +17,10 @@ class TeacherController extends Controller {
     public function index()
     {
         $teachers = Teacher::get();
-        return View::make("teachers.index")->withTeachers($teachers);
+        $alike = $this->alikeTeachers();
+        return View::make("teachers.index")
+        	->withTeachers($teachers)
+        	->withAlike($alike);
     }
 
     /**
@@ -108,10 +111,10 @@ class TeacherController extends Controller {
      *
      * @return Response
      */
-    public function sharedStudents()
+    public function uniqueStudents()
     {
         $students_id = is_null(Request::input('students'))?Array():Request::input('students');
-        $allStudents = Student::find($students_id);
+        $students = Student::find($students_id);
         // TODO: Изменить этот кошмарный (но рабочий) запрос
 
   		// SELECT * FROM 
@@ -146,7 +149,36 @@ class TeacherController extends Controller {
 					->mergeBindings($d_need)
 					->whereRaw('D_all.student_count = D_need.student_count')->get();
         return View::make('teachers.teacher_filter_result')
-        	->withStudents($allStudents)
+        	->withStudents($students)
         	->withTeachers($teachers);
+    }
+
+    /**
+     * Show single teacher to the user.
+     *
+     * @return array of Teacher
+     */
+    protected function alikeTeachers()
+    {
+    	// берётся первый попавшийся
+  		// SELECT ST1.teacher_id, ST2.teacher_id, count(ST1.student_id) AS student_count
+		// FROM student_teacher AS ST1
+		// INNER JOIN student_teacher AS ST2
+		// ON ST1.student_id = ST2.student_id
+		// WHERE
+		// ST1.teacher_id <> ST2.teacher_id
+		// GROUP BY ST1.teacher_id, ST2.teacher_id
+		// ORDER BY count(ST1.student_id) DESC 
+		// LIMIT 1
+		$teachers_id = DB::table('student_teacher AS ST1')
+					   ->select(DB::raw('ST1.teacher_id as teacher_id_1, ST2.teacher_id as teacher_id_2, count(ST1.student_id) AS student_count'))
+					   ->join('student_teacher AS ST2', 'ST1.student_id', '=','ST2.student_id')
+					   ->whereRaw('ST1.teacher_id <> ST2.teacher_id')
+					   ->groupBy('ST1.teacher_id')
+					   ->groupBy('ST2.teacher_id')
+					   ->orderBy(DB::raw('count(ST1.student_id)'),'DESC')
+					   ->first();
+		$teachers = Teacher::find([$teachers_id->teacher_id_1, $teachers_id->teacher_id_2]);
+		return $teachers;
     }
 }
