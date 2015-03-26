@@ -1,14 +1,14 @@
 @extends('app')
 @section('content')
 	<div class="container">
-		<h2>Преподаватели, которых учатся только следующие ученики</h2>
+		<h2>Преподаватели, которых учатся ТОЛЬКО следующие ученики</h2>
 			@foreach ($students as $student)
-				{{ $student->name }} 
+				<p><a href = "{{ url('students', $student->id) }}">{{ $student->name }}</a></p>
 			@endforeach
 		<div>
 			<h2>Результат</h2>
 			@foreach ($teachers as $teacher)
-				<p>{{ $teacher->name }}</p>
+				<p><a href = "{{ url('teachers', $teacher->id) }}">{{ $teacher->name }}</a></p>
 			@endforeach
 		</div>
 	</div>

@@ -26,6 +26,7 @@
 				<ul class="nav navbar-nav">
 					<li><a href="{{ url('/teachers/') }}">Преподаватели</a></li>
 					<li><a href="{{ url('/students/') }}">Студенты</a></li>
+					<li><a href="{{ url('/filter/') }}">Выбор преподавателей по студентам</a></li>
 				</ul>
 
 				<ul class="nav navbar-nav navbar-right">
