@@ -106,23 +106,41 @@ class TeacherController extends Controller {
      */
     public function sharedStudents()
     {
-        $students = is_null(Request::input('students'))?Array():Request::input('students');
-        $allStudents = Student::whereIn('id', $students)->get();
-        $query = "select teacher_id from 
-			(select teacher_id, count(student_id) as student_count
-			from student_teacher 
-			group by teacher_id) as D_all
-			inner join 
-			(select teacher_id as t_id, count(student_id) as  s_count
-			from student_teacher 
-			where student_id in (:in_values)
-			group by teacher_id) as D_need
-			on D_need.t_id = D_all.teacher_id AND D_need.s_count = D_all.student_count"
-        // $allTeachers = Teacher::whereHas('students', function($q) use ($students)
-        // {
-        //     $q->whereIn('id', $students);
-        // })->get();
+        $students_id = is_null(Request::input('students'))?Array():Request::input('students');
+        $allStudents = Student::find($students_id);
+        // TODO: Изменить этот кошмарный (но рабочий) запрос
 
-        return View::make('teacher_filter_result')->withStudents($allStudents)->withTeachers($allTeachers);
+  		// select * from 
+		// teachers
+		// inner join
+		// (select teacher_id, count(student_id) as student_count
+		// from student_teacher 
+		// group by teacher_id) as D_all
+		// on teachers.id = teacher_id
+		// inner join 	
+		// (select teacher_id as t_id, count(student_id) as  s_count
+		// from student_teacher 
+		// where student_id in (".implode(',', $students_id).")
+		// group by teacher_id) as D_need
+		// on D_need.t_id = D_all.teacher_id AND D_need.s_count = D_all.student_count
+
+		$d_all = DB::table('student_teacher')
+					->select(DB::raw('teacher_id, count(student_id) as student_count'))
+					->groupBy('teacher_id');
+		$d_need = DB::table('student_teacher')
+					->select(DB::raw('teacher_id, count(student_id) as student_count'))
+					->whereIn('student_id',$students_id)
+					->groupBy('teacher_id');
+
+		$teachers = Teacher::select()
+					->join(DB::raw("({$d_all->toSQL()}) as D_all"), function($join) {
+						$join->on('id', '=', 'D_all.teacher_id');
+					})
+					->join(DB::raw("({$d_need->toSQL()}) as D_need"), function($join) {
+						$join->on('D_all.teacher_id', '=', 'D_need.teacher_id');
+					})
+					->mergeBindings($d_need)
+					->whereRaw('D_all.student_count = D_need.student_count')->get();
+        return View::make('teacher_filter_result')->withStudents($allStudents)->withTeachers($teachers);
     }
 }

@@ -1,9 +1,9 @@
 @extends('app')
 @section('content')
 	<div class="container">
-		<h2>Список студентов</h2>
+		<h2>Преподаватели, которых учатся только следующие ученики</h2>
 			@foreach ($students as $student)
-				<p>{{ $student->name }}</p>
+				{{ $student->name }} 
 			@endforeach
 		<div>
 			<h2>Общие преподаватели</h2>

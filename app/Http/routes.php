@@ -17,17 +17,6 @@ Route::controllers([
 	'password' => 'Auth\PasswordController',
 ]);
 
-// Route::group(['prefix' => 'teachers'], function()
-// {
-//     Route::get('/', function()
-//     {
-//         return Redirect::to('teachers/list');
-//     });
-//     Route::get('/list/', ['as'=>'list', 'uses'=>'TeacherController@getList']);
-//     Route::get('/{id}', 'TeacherController@getSingle');
-//     Route::get('/add', 'TeacherController@add');
-// });
-
 Route::resource('teachers', 'TeacherController',
                 ['only' => ['index', 'show', 'create', 'store', 'edit', 'update' ]]);
 
@@ -36,14 +25,3 @@ Route::post('/filter/result', 'TeacherController@sharedStudents');
 
 Route::resource('students', 'StudentController',
                 ['only' => ['index', 'show', 'create', 'store', 'edit', 'update' ]]);
-
-// Route::group(['prefix' => 'students'], function()
-// {
-//     Route::get('/', function()
-//     {
-//         return Redirect::to('students/list');
-//     });
-//     Route::get('/list/', ['as'=>'list', 'uses'=>'StudentController@getList']);
-//     Route::get('/{id}', 'StudentController@getSingle');
-//     Route::get('/add', 'StudentController@add');
-// });
