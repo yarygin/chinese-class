@@ -7,7 +7,7 @@ use chineseClass\Models\Student;
 class StudentController extends Controller {
 
 	/**
-	 * Show teacher list to the user.
+	 * Show students list to the user.
 	 *
 	 * @return Response
 	 */
@@ -19,7 +19,7 @@ class StudentController extends Controller {
 	}
 
 	/**
-	 * Show single teacher to the user.
+	 * Show single student to the user.
 	 *
 	 * @return Response
 	 */
@@ -33,7 +33,7 @@ class StudentController extends Controller {
 	}
 
 	/**
-	 * Show single teacher to the user.
+	 * Show new student form to the user.
 	 *
 	 * @return Response
 	 */
@@ -43,7 +43,7 @@ class StudentController extends Controller {
 	}
 
 	/**
-	 * Show single teacher to the user.
+	 * Save student to the db.
 	 *
 	 * @return Response
 	 */

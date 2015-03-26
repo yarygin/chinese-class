@@ -24,7 +24,7 @@ class TeacherController extends Controller {
     }
 
     /**
-     * Show teacher list to the user.
+     * Show teacher edit page to the user.
      *
      * @return Response
      */
@@ -54,7 +54,7 @@ class TeacherController extends Controller {
     }
 
     /**
-     * Show single teacher to the user.
+     * Show form for new teacher to the user.
      *
      * @return Response
      */
@@ -66,7 +66,7 @@ class TeacherController extends Controller {
     }
 
     /**
-     * Show single teacher to the user.
+     * Save new teacher to db.
      *
      * @return Response
      */
@@ -79,7 +79,7 @@ class TeacherController extends Controller {
     }
 
     /**
-     * Show single teacher to the user.
+     * Save changes to db.
      *
      * @return Response
      */
@@ -94,7 +94,7 @@ class TeacherController extends Controller {
     }
 
     /**
-     * Show single teacher to the user.
+     * Show filter form to the user.
      *
      * @return Response
      */
@@ -107,7 +107,8 @@ class TeacherController extends Controller {
     }
 
     /**
-     * Show single teacher to the user.
+     * get teachers with only students in input.
+     * Show filter result to the user
      *
      * @return Response
      */
@@ -115,6 +116,7 @@ class TeacherController extends Controller {
     {
         $students_id = is_null(Request::input('students'))?Array():Request::input('students');
         $students = Student::find($students_id);
+        
         // TODO: Изменить этот кошмарный (но рабочий) запрос
 
   		// SELECT * FROM 
@@ -154,7 +156,7 @@ class TeacherController extends Controller {
     }
 
     /**
-     * Show single teacher to the user.
+     * get teachers with max mutual students.
      *
      * @return array of Teacher
      */
@@ -170,6 +172,7 @@ class TeacherController extends Controller {
 		// GROUP BY ST1.teacher_id, ST2.teacher_id
 		// ORDER BY count(ST1.student_id) DESC 
 		// LIMIT 1
+
 		$teachers_id = DB::table('student_teacher AS ST1')
 					   ->select(DB::raw('ST1.teacher_id as teacher_id_1, ST2.teacher_id as teacher_id_2, count(ST1.student_id) AS student_count'))
 					   ->join('student_teacher AS ST2', 'ST1.student_id', '=','ST2.student_id')
